@@ -1,7 +1,4 @@
 class MarsRover
-
-	attr_accessor :x_up_right, :y_up_right, :x_coord, :y_coord, :heading
-
 	# constructor method
 	def initialize
 		@x_up_right
@@ -12,87 +9,90 @@ class MarsRover
 	end
 
 	# instance methods
-	def evaluateRoverInstructions
-		file = File.open("mars_rover_input.txt", 'r')
-
-		# read first line for Top Right Coordinates
-		up_right_line = file.readline
-		up_right_values = up_right_line.chomp!
-		up_right_values = up_right_values.split(" ")
-		@x_up_right = up_right_values[0]
-		@y_up_right = up_right_values[1]
-		# puts "Top Right Coordinates: (" + @x_up_right + "," + @y_up_right + ")"
-
-		while !file.eof?
-
-			# read line for Rover Position 
-		  rover_position_line = file.readline
-			rover_position_values = rover_position_line.chomp!
-			rover_position_values = rover_position_values.split(" ")
-			@x_coord = rover_position_values[0].to_i
-			@y_coord = rover_position_values[1].to_i
-			@heading = rover_position_values[2]
-
-			#puts "Rover Position: (" + @x_coord.to_s + "," + @y_coord.to_s + "," + @heading + ")"
-
-			# read line for Rover Instructions and Update Rover Position
-		  rover_instructions = file.readline
-		  rover_instructions = rover_instructions.chomp!
-		  rover_instructions = rover_instructions.split("")
-		  self.parseInstructions(rover_instructions)
-		  puts @x_coord.to_s + " " + @y_coord.to_s + " " + @heading
-		end
-
-		file.close
+	def readInstructionLine(file,split_char)
+		line = file.readline
+		line = line.chomp!
+		line = line.split(split_char)
 	end
 
-	def spinLeft
-		if @heading == "N"
-			@heading = "W"
-		elsif @heading == "W"
-			@heading = "S"
-		elsif @heading == "S"
-			@heading = "E"
-		elsif @heading == "E"
-			@heading = "N"
-		end			
+	def setUpRightCoordinates(line_reader)
+		@x_up_right = line_reader[0]
+		@y_up_right = line_reader[1]
 	end
 
-	def spinRight
-		if @heading == "N"
-			@heading = "E"
-		elsif @heading == "E"
-			@heading = "S"
-		elsif @heading == "S"
+	# If spin_direction is left then left_spin_heading value will be evaluated
+	# or if spin_direction is right then right_spin_heading will evaluated
+	# i.e. Left Turn from N or Right Turn from S results in W
+	def evaluateSpin(spin_direction,left_spin_heading, right_spin_heading)
+		@heading == left_spin_heading && spin_direction == "left" || 
+			@heading == right_spin_heading && spin_direction == "right"
+	end
+
+	def spin(direction)
+		if self.evaluateSpin(direction,"N","S")
 			@heading = "W"
-		elsif @heading == "W"
+		elsif self.evaluateSpin(direction,"W","E")
+			@heading = "S"
+		elsif self.evaluateSpin(direction,"S","N")
+			@heading = "E"
+		elsif self.evaluateSpin(direction,"E","W")
 			@heading = "N"
-		end			
+		end	
 	end
 
 	def moveForward
-		if @heading == "N"
-			@y_coord += 1
-		elsif @heading == "E"
+		if @heading == "E"
 			@x_coord += 1
-		elsif @heading == "S"
-			@y_coord -= 1
+		elsif @heading == "N"
+			@y_coord += 1
 		elsif @heading == "W"
 			@x_coord -= 1
+		elsif @heading == "S"
+			@y_coord -= 1
 		end	
-		
 	end
 
 	def parseInstructions(instruction_set)
 		instruction_set.each { |i| 
 			if i == "L"
-				self.spinLeft
+				self.spin("left")
 			elsif i == "R"
-				self.spinRight
+				self.spin("right")
 			elsif i == "M"
 				self.moveForward
 			end		
 		}
+	end
+
+	def setRoverStartCoordinates(line_reader)
+		@x_coord = line_reader[0].to_i
+		@y_coord = line_reader[1].to_i
+		@heading = line_reader[2]
+	end
+
+	def outputRoverCoordinates
+		puts @x_coord.to_s + " " + @y_coord.to_s + " " + @heading
+	end	
+
+	def evaluateRoverInstructions
+		file = File.open("mars_rover_input.txt", 'r')
+
+		# read first line for Top Right Coordinates
+		line_reader = self.readInstructionLine(file, " ")
+		self.setUpRightCoordinates(line_reader)
+
+		while !file.eof?
+			# read line for Rover Position
+			line_reader = self.readInstructionLine(file, " ")
+			self.setRoverStartCoordinates(line_reader)
+		  
+			# read line for Rover Instructions and Update Rover Position
+		  line_reader = self.readInstructionLine(file, "")
+		  self.parseInstructions(line_reader)
+		  self.outputRoverCoordinates
+		end
+
+		file.close
 	end
 end
 
