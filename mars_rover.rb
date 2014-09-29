@@ -1,6 +1,6 @@
 class MarsRover
 
-	attr_accessor :x_coord, :y_coord, :heading
+	attr_accessor :x_up_right, :y_up_right, :x_coord, :y_coord, :heading
 
 	# constructor method
 	def initialize
