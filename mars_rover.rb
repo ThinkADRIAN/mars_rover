@@ -81,16 +81,16 @@ class MarsRover
 			end		
 		}
 	end
+
+	def outputRoverCoordinates
+		puts @x_coord.to_s + " " + @y_coord.to_s + " " + @heading
+	end
 	
 	# read line for Rover Instructions and Update Rover Position
 	def handleRoverMoveInstructions(file)
 		line_reader = self.readInstructionLine(file, "")
 		self.parseInstructions(line_reader)
 		self.outputRoverCoordinates
-	end
-
-	def outputRoverCoordinates
-		puts @x_coord.to_s + " " + @y_coord.to_s + " " + @heading
 	end
 end
 
