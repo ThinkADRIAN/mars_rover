@@ -20,6 +20,24 @@ class MarsRover
 		@y_up_right = line_reader[1]
 	end
 
+	# read first line for Top Right Coordinates
+	def handleTopRightCoordsInstruction(file)
+		line_reader = self.readInstructionLine(file, " ")
+		self.setUpRightCoordinates(line_reader)
+	end
+
+	def setRoverStartCoordinates(line_reader)
+		@x_coord = line_reader[0].to_i
+		@y_coord = line_reader[1].to_i
+		@heading = line_reader[2]
+	end
+
+	# read line for Rover Position
+	def handleRoverPositionInstruction(file)
+		line_reader = self.readInstructionLine(file, " ")
+		self.setRoverStartCoordinates(line_reader)
+	end
+
 	# If spin_direction is left then left_spin_heading value will be evaluated
 	# or if spin_direction is right then right_spin_heading will evaluated
 	# i.e. Left Turn from N or Right Turn from S results in W
@@ -63,34 +81,16 @@ class MarsRover
 			end		
 		}
 	end
-
-	def setRoverStartCoordinates(line_reader)
-		@x_coord = line_reader[0].to_i
-		@y_coord = line_reader[1].to_i
-		@heading = line_reader[2]
-	end
-
-	def outputRoverCoordinates
-		puts @x_coord.to_s + " " + @y_coord.to_s + " " + @heading
-	end
 	
-	# read first line for Top Right Coordinates
-	def handleTopRightCoordsInstruction(file)
-		line_reader = self.readInstructionLine(file, " ")
-		self.setUpRightCoordinates(line_reader)
-	end
-
-	# read line for Rover Position
-	def handleRoverPositionInstruction(file)
-		line_reader = self.readInstructionLine(file, " ")
-		self.setRoverStartCoordinates(line_reader)
-	end
-
 	# read line for Rover Instructions and Update Rover Position
 	def handleRoverMoveInstructions(file)
 		line_reader = self.readInstructionLine(file, "")
 		self.parseInstructions(line_reader)
 		self.outputRoverCoordinates
+	end
+
+	def outputRoverCoordinates
+		puts @x_coord.to_s + " " + @y_coord.to_s + " " + @heading
 	end
 end
 
