@@ -92,15 +92,18 @@ class MarsRover
 		self.parseInstructions(line_reader)
 		self.outputRoverCoordinates
 	end
+
+	def handleInstructionFile(file)
+		self.handleTopRightCoordsInstruction(file)
+
+		while !file.eof?
+		  self.handleRoverPositionInstruction(file)
+			self.handleRoverMoveInstructions(file)
+		end
+	end
 end
 
 my_rover = MarsRover.new
 file = File.open("mars_rover_input.txt", 'r')
-my_rover.handleTopRightCoordsInstruction(file)
-
-while !file.eof?
-  my_rover.handleRoverPositionInstruction(file)
-	my_rover.handleRoverMoveInstructions(file)
-end
-
+my_rover.handleInstructionFile(file)
 file.close
