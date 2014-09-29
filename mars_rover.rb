@@ -72,29 +72,35 @@ class MarsRover
 
 	def outputRoverCoordinates
 		puts @x_coord.to_s + " " + @y_coord.to_s + " " + @heading
-	end	
-
-	def evaluateRoverInstructions
-		file = File.open("mars_rover_input.txt", 'r')
-
-		# read first line for Top Right Coordinates
+	end
+	
+	# read first line for Top Right Coordinates
+	def handleTopRightCoordsInstruction(file)
 		line_reader = self.readInstructionLine(file, " ")
 		self.setUpRightCoordinates(line_reader)
+	end
 
-		while !file.eof?
-			# read line for Rover Position
-			line_reader = self.readInstructionLine(file, " ")
-			self.setRoverStartCoordinates(line_reader)
-		  
-			# read line for Rover Instructions and Update Rover Position
-		  line_reader = self.readInstructionLine(file, "")
-		  self.parseInstructions(line_reader)
-		  self.outputRoverCoordinates
-		end
+	# read line for Rover Position
+	def handleRoverPositionInstruction(file)
+		line_reader = self.readInstructionLine(file, " ")
+		self.setRoverStartCoordinates(line_reader)
+	end
 
-		file.close
+	# read line for Rover Instructions and Update Rover Position
+	def handleRoverMoveInstructions(file)
+		line_reader = self.readInstructionLine(file, "")
+		self.parseInstructions(line_reader)
+		self.outputRoverCoordinates
 	end
 end
 
 my_rover = MarsRover.new
-my_rover.evaluateRoverInstructions
+file = File.open("mars_rover_input.txt", 'r')
+my_rover.handleTopRightCoordsInstruction(file)
+
+while !file.eof?
+  my_rover.handleRoverPositionInstruction(file)
+	my_rover.handleRoverMoveInstructions(file)
+end
+
+file.close
